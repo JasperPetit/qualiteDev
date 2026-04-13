@@ -11,7 +11,8 @@ public class VoitureTest {
 
     @Test
     void creerVoiture(){
-        assertEquals(1,1);
+        assertEquals(2,2);
+        //Bonjour ceci est un commentaire de test
     }
 
 }
