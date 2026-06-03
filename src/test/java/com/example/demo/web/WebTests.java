@@ -17,6 +17,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import javax.print.attribute.standard.Media;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class WebTests {
@@ -26,5 +28,43 @@ class WebTests {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Test
+    public void aucuneVoiture_renvoie400() throws Exception{
+
+        when(statistiqueImpl.prixMoyen()).thenThrow(new ArithmeticException());
+
+        mockMvc.perform(get("/statistique"))
+                .andExpect(status().is(400))
+                .andDo(print());
+    } 
+
+    @Test
+    public void chargerVoitures() throws Exception{
+
+        String jsonVoiture = "{\"marque\":\"ferrari\",\"prix\":50000}";
+
+        mockMvc.perform(post("/voiture")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonVoiture))
+        .andExpect(status().is(200));
+
+        verify(statistiqueImpl,times(1)).ajouter(any(Voiture.class));
+    }
+
+    @Test
+    public void statistique_renvoie200() throws Exception{
+        Echantillon EchantillonTest = new Echantillon(2,15000);
+        when(statistiqueImpl.prixMoyen()).thenReturn(EchantillonTest);
+
+        mockMvc.perform(get("/statistique"))
+                .andDo(print())
+                .andExpect(status().is(200))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.nombreDeVoitures").value(2))
+                .andExpect(jsonPath("$.prixMoyen").value(15000));
+
+    }
+
 
 }
