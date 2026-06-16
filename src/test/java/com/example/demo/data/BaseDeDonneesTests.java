@@ -13,5 +13,5 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class BaseDeDonneesTests {
 
-
+    //Il n'y a pas de test ici. Ce commentaire sert a tester sonar
 }
